@@ -1,1 +1,1 @@
-Hands-on experiments with devops and cloud tools
+Hands-on experiments with devops and cloud tools.
