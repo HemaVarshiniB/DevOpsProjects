@@ -1,4 +1,4 @@
-![alt text](Architecture_image-1.png)
+![alt text](Architecture_image.png)
 
 # 🚀 Deploy Static Website using Amazon S3 + CloudFront
 
