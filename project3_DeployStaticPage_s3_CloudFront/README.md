@@ -1,4 +1,4 @@
-![alt text](<ChatGPT Image Jul 1, 2026, 07_59_52 PM.png>)
+![alt text](Architecture_image.png)
 
 # 🚀 Deploy Static Website using Amazon S3 + CloudFront
 
