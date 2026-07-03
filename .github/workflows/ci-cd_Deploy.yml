@@ -32,7 +32,7 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: 'us-east-1' # Region of your bucket
-        SOURCE_DIR: './project3_DeployStaticPage_s3_CloudFront' # Folder to upload to S3. In this case, the root of the repo. Directory to upload (here: entire repo ./)
+        SOURCE_DIR: 'project3_DeployStaticPage_s3_CloudFront' # Folder to upload to S3. In this case, the root of the repo. Directory to upload (here: entire repo ./)
 
 # What Happens End-to-End:
 # You push code to main -> GitHub Actions starts this workflow -> It checks out your repo -> Syncs all files to your S3 bucket -> Deletes old files in S3 (if removed from repo)
