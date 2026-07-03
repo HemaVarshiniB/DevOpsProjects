@@ -26,7 +26,9 @@ jobs:
       with:
         # --follow-symlinks → Uploads actual files instead of symbolic links
         # --delete → Removes files from S3 that no longer exist in your repo. Keeps S3 perfectly in sync with your code
-        args: --follow-symlinks --delete
+        # --exclude ".git*" → Excludes all files and folders starting with .git (like .gitignore, .git folder, etc.)
+        # --exclude "*.md" → Excludes all markdown files (like README.md, etc
+        args: --follow-symlinks --delete --exclude ".git*" --exclude "*.md"
       env:
         AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }} # Name of the s3 bucket. Stored in GitHub secrets for security.
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
