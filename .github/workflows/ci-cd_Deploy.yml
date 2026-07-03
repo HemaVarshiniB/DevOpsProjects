@@ -1,0 +1,38 @@
+# This is a GitHub Actions workflow that automatically deploys your website files to an AWS S3 bucket whenever you push code to the mainbranch.
+# This is an automatic deployment pipeline that keeps your S3-hosted website updated with your latest GitHub code.
+
+
+# This is just the name of the workflow shown in GitHub Actions UI.
+name: Upload Website to S3 bucket
+
+# This workflow runs automatically whenever you push code to the main branch.
+# Useful for CI/CD (continuous deployment).
+on:
+  push:
+    branches:
+    - main
+
+# Defines a job called deploy.
+# It runs on a virtual machine using Ubuntu (latest version).
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    # In GitHub Actions, - uses: something, means -> “Use a pre-built action created by someone else”, Think of it like: importing a library in code (import xyz) or using an npm package
+    steps:
+    # actions/checkout → Official GitHub Action. Purpose → Downloads your repo code into the workflow runner (virtual machine) 👉 Without this, your workflow has no access to your files.
+    - uses: actions/checkout@master
+    # Hey GitHub, go to Jake Jarvis’s repository, take his S3 upload script, and run it here. No need to write sync commands expliciltly. Jake Jarvis has already done that for us. Thanks, Jake!
+    - uses: jakejarvis/s3-sync-action@master
+      with:
+        # --follow-symlinks → Uploads actual files instead of symbolic links
+        # --delete → Removes files from S3 that no longer exist in your repo. Keeps S3 perfectly in sync with your code
+        args: --follow-symlinks --delete
+      env:
+        AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }} # Name of the s3 bucket. Stored in GitHub secrets for security.
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: 'us-east-1' # Region of your bucket
+        SOURCE_DIR: './' # Folder to upload to S3. In this case, the root of the repo. Directory to upload (here: entire repo ./)
+
+# What Happens End-to-End:
+# You push code to main -> GitHub Actions starts this workflow -> It checks out your repo -> Syncs all files to your S3 bucket -> Deletes old files in S3 (if removed from repo)
