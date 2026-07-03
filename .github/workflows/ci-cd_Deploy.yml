@@ -20,22 +20,21 @@ jobs:
     # In GitHub Actions, - uses: something, means -> “Use a pre-built action created by someone else”, Think of it like: importing a library in code (import xyz) or using an npm package
     steps:
     # actions/checkout → Official GitHub Action. Purpose → Downloads your repo code into the workflow runner (virtual machine) 👉 Without this, your workflow has no access to your files.
-    - uses: actions/checkout@master
-    # Hey GitHub, go to Jake Jarvis’s repository, take his S3 upload script, and run it here. No need to write sync commands expliciltly. Jake Jarvis has already done that for us. Thanks, Jake!
-    - uses: jakejarvis/s3-sync-action@master
+    - uses: actions/checkout@v4
+    - uses: aws-actions/configure-aws-credentials@v4
       with:
-        # --follow-symlinks → Uploads actual files instead of symbolic links
-        # --delete → Removes files from S3 that no longer exist in your repo. Keeps S3 perfectly in sync with your code
-        # --exclude ".git*" → Excludes all files and folders starting with .git (like .gitignore, .git folder, etc.)
-        # --exclude "*.md" → Excludes all markdown files (like README.md, etc
-        args: >
-          --follow-symlinks
-          --delete
-          --exclude ".git/*"
-          --exclude ".git*"
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Sync files to S3
+      run: |
+        aws s3 sync ./project3_DeployStaticPage_s3_CloudFront s3://${{ secrets.AWS_S3_BUCKET }} \
+          --delete \
+          --exclude ".git/*" \
+          --exclude ".github/*" \
           --exclude "*.md"
-          --exclude ".github/*"
-      env:
+    env:
         AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }} # Name of the s3 bucket. Stored in GitHub secrets for security.
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
