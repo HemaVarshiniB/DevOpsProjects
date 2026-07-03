@@ -1,51 +1,48 @@
-# This is a GitHub Actions workflow that automatically deploys your website files to an AWS S3 bucket whenever you push code to the mainbranch.
-# This is an automatic deployment pipeline that keeps your S3-hosted website updated with your latest GitHub code.
-
-
-# This is just the name of the workflow shown in GitHub Actions UI.
+# Workflow name shown in GitHub Actions tab
 name: Upload Website to S3 bucket
 
-# This workflow runs automatically whenever you push code to the main branch.
-# Useful for CI/CD (continuous deployment).
+# Trigger: Runs automatically when code is pushed to main branch
 on:
   push:
     branches:
-    - main
+      - main
 
-# Defines a job called deploy.
-# It runs on a virtual machine using Ubuntu (latest version).
 jobs:
   deploy:
+    # Runs on a fresh Ubuntu virtual machine
     runs-on: ubuntu-latest
-    # In GitHub Actions, - uses: something, means -> “Use a pre-built action created by someone else”, Think of it like: importing a library in code (import xyz) or using an npm package
+
     steps:
-    # actions/checkout → Official GitHub Action. Purpose → Downloads your repo code into the workflow runner (virtual machine) 👉 Without this, your workflow has no access to your files.
-    - uses: actions/checkout@v4
-    - uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
+      # Step 1: Download repository code into the runner
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Sync files to S3
-      run: |
-        aws s3 sync ./project3_DeployStaticPage_s3_CloudFront s3://${{ secrets.AWS_S3_BUCKET }} \
-          --delete \
-          --exclude ".git/*" \
-          --exclude ".github/*" \
-          --exclude "*.md"
+      # Step 2: Configure AWS credentials using GitHub Secrets
+      # This allows GitHub Actions to access your AWS account securely
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
 
-    - name: Invalidate CloudFront Cache
-      run: |
+      # Step 3: Sync project3 folder to S3 bucket
+      # - Copies files from local repo to S3
+      # - --delete removes files from S3 if they no longer exist in repo
+      # - --exclude prevents uploading unwanted files like git metadata and markdown docs
+      - name: Sync files to S3
+        run: |
+          aws s3 sync ./project3_DeployStaticPage_s3_CloudFront s3://${{ secrets.AWS_S3_BUCKET }} \
+            --delete \
+            --exclude ".git/*" \
+            --exclude ".github/*" \
+            --exclude "*.md"
+
+      # Step 4: Invalidate CloudFront cache
+      # CloudFront caches files at edge locations, so updates may not appear immediately
+      # This step forces CloudFront to fetch the latest version from S3
+      - name: Invalidate CloudFront Cache
+        run: |
           aws cloudfront create-invalidation \
             --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
             --paths "/*"
-    # env:
-    #     AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }} # Name of the s3 bucket. Stored in GitHub secrets for security.
-    #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    #     AWS_REGION: 'us-east-1' # Region of your bucket
-    #     SOURCE_DIR: 'project3_DeployStaticPage_s3_CloudFront' # Folder to upload to S3. In this case, the root of the repo. Directory to upload (here: entire repo ./)
-
-# What Happens End-to-End:
-# You push code to main -> GitHub Actions starts this workflow -> It checks out your repo -> Syncs all files to your S3 bucket -> Deletes old files in S3 (if removed from repo)
