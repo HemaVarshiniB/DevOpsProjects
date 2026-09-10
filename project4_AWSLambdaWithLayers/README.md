@@ -3,22 +3,16 @@
 ## Key Concepts
 
 ### Lambda Function
-
 Think of Lambda as a small piece of code that wakes up when something happens. A Lambda function is simply your code packaged so AWS can execute it for you.
 
 ### Trigger
-
 A trigger is the thing that causes/invokes the Lambda function.
 
 ### Event
-
 The event is the data about what happened that caused Lambda to run. This EventJSON is passed as parameter into the Lambda function.
 
 ### Lambda Layer
-
-A Lambda Layer is a reusable package of code, libraries, or dependencies that you can attach to one or more Lambda functions.
-
-Instead of putting everything inside every Lambda deployment package, you can put common dependencies into a Layer.
+A Lambda Layer is a reusable package of code, libraries, or dependencies that you can attach to one or more Lambda functions. Instead of putting everything inside every Lambda deployment package, you can put common dependencies into a Layer.
 
 ### Trigger → Event → Lambda Function
 
