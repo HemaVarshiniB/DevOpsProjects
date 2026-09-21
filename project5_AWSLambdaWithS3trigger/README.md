@@ -50,3 +50,8 @@ Now go to s3 -> Upload image file -> It should trigger lambda function, and it c
 Clean up s3 bucket, lambda function
 
 NOTE: The Lambda execution role gives Lambda permission to access S3, while adding the S3 trigger automatically creates a resource-based policy on Lambda that gives S3 permission to invoke the Lambda function.
+
+NOTE: AWS Lambda and S3 do not strictly have to be in the same region, but there are important considerations.
+- If you want an S3 bucket to directly trigger a Lambda function when an object is uploaded, the Lambda function and S3 bucket must be in the same AWS Region.
+- A Lambda function can access an S3 bucket in a different region using the AWS SDK. You need to make sure: The Lambda execution role has appropriate S3 permissions. **Your SDK/client is configured for the bucket's region when necessary**. You account for cross-region latency and data-transfer considerations.
+- API Gateway + Lambda: Same Region is recommended, but it's not an absolute requirement.
