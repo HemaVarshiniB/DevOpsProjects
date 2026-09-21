@@ -58,5 +58,11 @@ After completing this setup:
 
 ---	
 
+## NOTE
+
+S3 and CloudFront don't need to be in the same region. CloudFront is a global CDN, and it can use an S3 bucket in any AWS region as its origin. CloudFront will fetch the objects from your S3 bucket and cache them at its edge locations, which are geographically closer to users. CloudFront is designed to access S3 buckets across AWS Regions.
+
+---
+
 ### Delete the CloudFront distribtion: 
 - Go to AWS CloudFront, open your distribution, disable it and wait until it becomes disabled, then click delete and confirm to remove it.
