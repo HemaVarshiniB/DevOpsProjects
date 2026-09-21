@@ -24,14 +24,6 @@ Event = Information about that occurrence
 Lambda Function = Code that processes it
 ```
 
-### Example
-
-Someone presses doorbell:
-
-```text
-Trigger → Doorbell sends information → Lambda function
-```
-
 ### Analogy
 
 ```text
